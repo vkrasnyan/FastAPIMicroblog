@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql+psycopg2://vickie:newpassword@localhost:5432/microblog"
+    DATABASE_URL: str = 'postgresql+asyncpg://vickie:newpassword@localhost/microblog'
 
     class Config:
         env_file = ".env"

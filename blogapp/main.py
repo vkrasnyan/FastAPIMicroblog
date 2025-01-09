@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import AsyncGenerator
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from blogapp.database import engine, async_session, Base
@@ -48,13 +49,11 @@ async def health_check():
     return {"status": "ok"}
 
 
-@app.get("/health/db")
+@app.get("/health/db", tags=["Health"])
 async def db_health_check():
     try:
-        db = async_session()
-        db.execute("SELECT 1")
+        async with async_session() as db:
+            await db.execute(text("SELECT 1"))
         return {"status": "Database is connected"}
     except Exception as e:
         return {"status": "Database connection failed", "error": str(e)}
-    finally:
-        db.close()

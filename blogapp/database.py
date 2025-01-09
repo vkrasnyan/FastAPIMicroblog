@@ -4,7 +4,7 @@ from blogapp.config import settings
 
 DATABASE_URL = settings.DATABASE_URL
 
-engine = create_async_engine('postgresql+psycopg2://vickie:newpassword@localhost/microblog', echo=True)
+engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
     )

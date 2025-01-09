@@ -27,6 +27,11 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 
 from blogapp.database import Base
+from blogapp.models.user import User
+from blogapp.models.tweet import Tweet
+from blogapp.models.like import Like
+from blogapp.models.media import Media
+from blogapp.models.follow import Follow
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
