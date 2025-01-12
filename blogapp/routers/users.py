@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Header, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from blogapp.models.user import User
+from blogapp.models.follow import Follow
 from blogapp.schemas import UserCreate, UserResponse, UserUpdate
 from ..database import get_async_session
 
@@ -79,3 +80,80 @@ async def update_user(
     await session.refresh(user)
 
     return user
+
+@router.post("/users/{id}/follow")
+async def follow_user(
+    id: int,
+    api_key: str = Header(...),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """
+    Роут для подписки на пользователя.
+    """
+    # Ищем пользователя с указанным api_key
+    query = await session.execute(select(User).where(User.api_key == api_key))
+    follower = query.scalar_one_or_none()
+
+    if not follower:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
+    # Ищем пользователя, на которого подписываются
+    query = await session.execute(select(User).where(User.id == id))
+    followed = query.scalar_one_or_none()
+
+    if not followed:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Проверяем, не подписан ли уже пользователь
+    query = await session.execute(
+        select(Follow).where(Follow.leader_id == follower.id, Follow.followed_id == followed.id)
+    )
+    existing_follow = query.scalar_one_or_none()
+
+    if existing_follow:
+        raise HTTPException(status_code=400, detail="Already following this user")
+
+    # Создаем запись о подписке
+    follow = Follow(leader_id=follower.id, followed_id=followed.id)
+    session.add(follow)
+    await session.commit()
+
+    return {"result": True}
+
+
+@router.delete("/users/{id}/follow")
+async def unfollow_user(
+    id: int,
+    api_key: str = Header(...),
+    session: AsyncSession = Depends(get_async_session)
+):
+    """
+    Роут для отписки от пользователя.
+    """
+
+    query = await session.execute(select(User).where(User.api_key == api_key))
+    follower = query.scalar_one_or_none()
+
+    if not follower:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
+    # Ищем пользователя, от которого отписываются
+    query = await session.execute(select(User).where(User.id == id))
+    followed = query.scalar_one_or_none()
+
+    if not followed:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    query = await session.execute(
+        select(Follow).where(Follow.leader_id == follower.id, Follow.followed_id == followed.id)
+    )
+    follow = query.scalar_one_or_none()
+
+    if not follow:
+        raise HTTPException(status_code=400, detail="Not following this user")
+
+    await session.delete(follow)
+    await session.commit()
+
+    return {"result": True}
+
