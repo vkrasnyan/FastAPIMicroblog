@@ -17,6 +17,9 @@ class UserResponse(UserBase):
     class Config:
         orm_mode = True
 
+class UserUpdate(UserBase):
+    name: Optional[str] = None
+
 
 # Схемы для твитов
 class TweetBase(BaseModel):
