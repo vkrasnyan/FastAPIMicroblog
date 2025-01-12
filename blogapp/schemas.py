@@ -13,12 +13,6 @@ class UserResponse(UserBase):
     id: int
     created_at: datetime = Field(..., title="User creation timestamp")
     updated_at: Optional[datetime] = Field(None, title="Last update timestamp")
-    follow_up: Optional[List[int]] = Field(
-        None, title="IDs of users this user follows"
-    )
-    follow_down: Optional[List[int]] = Field(
-        None, title="IDs of users following this user"
-    )
 
     class Config:
         orm_mode = True
