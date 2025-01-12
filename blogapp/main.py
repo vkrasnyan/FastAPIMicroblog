@@ -5,7 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from blogapp.database import engine, async_session, Base
-# from routers import users, tweets, follows, likes, medias
+from blogapp.routers import users
 
 
 # Функция для обработки жизненного цикла приложения в современных версиях FastAPI
@@ -19,11 +19,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
 
 app = FastAPI(title="Microblog API", lifespan=lifespan)
 
-# Зависимость для получения сессии
-async def get_session() -> AsyncSession:
-    async with async_session() as session:
-        yield session
-
 
 # CORS Middleware
 app.add_middleware(
@@ -34,11 +29,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.include_router(users.router, prefix="/api/users", tags=["Users"])
-# app.include_router(tweets.router, prefix="/api/tweets", tags=["Tweets"])
-# app.include_router(follows.router, prefix="/api/follows", tags=["Follows"])
-# app.include_router(likes.router, prefix="/api/likes", tags=["Likes"])
-# app.include_router(medias.router, prefix="/api/medias", tags=["Medias"])
+app.include_router(users.router, prefix="/users", tags=["Users"])
+# app.include_router(tweets.router, prefix="/tweets", tags=["Tweets"])
+# app.include_router(follows.router, prefix="/follows", tags=["Follows"])
+# app.include_router(likes.router, prefix="/likes", tags=["Likes"])
+# app.include_router(medias.router, prefix="/medias", tags=["Medias"])
 
 
 @app.get("/", tags=["Health"])

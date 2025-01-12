@@ -12,10 +12,8 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    tweets = relationship("Tweet", back_populates="author")
-
-    # Связь с пользователями, на которых этот пользователь подписан
+    tweets = relationship("Tweet", back_populates="author", lazy="dynamic")
+    likes = relationship("Like", back_populates="user", lazy="dynamic")
     follow_up = relationship("Follow", foreign_keys="[Follow.leader_id]", back_populates="leader")
-
-    # Связь с пользователями, которые подписаны на этого пользователя
     follow_down = relationship("Follow", foreign_keys="[Follow.followed_id]", back_populates="followed")
+

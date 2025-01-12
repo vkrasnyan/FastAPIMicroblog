@@ -9,5 +9,5 @@ class Like(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     tweet_id = Column(Integer, ForeignKey('tweets.id'), nullable=False)
-    user = relationship('User')
-    tweet = relationship('Tweet', back_populates='likes')
+    user = relationship('User', back_populates='likes', lazy='dynamic')
+    tweet = relationship('Tweet', back_populates='likes', lazy='dynamic')
