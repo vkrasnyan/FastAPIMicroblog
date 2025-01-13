@@ -5,7 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from blogapp.database import engine, async_session, Base
-from blogapp.routers import users
+from blogapp.routers import users, tweets
 
 
 # Функция для обработки жизненного цикла приложения в современных версиях FastAPI
@@ -30,7 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(users.router, prefix="/users", tags=["Users"])
-# app.include_router(tweets.router, prefix="/tweets", tags=["Tweets"])
+app.include_router(tweets.router, prefix="/tweets", tags=["Tweets"])
 # app.include_router(follows.router, prefix="/follows", tags=["Follows"])
 # app.include_router(likes.router, prefix="/likes", tags=["Likes"])
 # app.include_router(medias.router, prefix="/medias", tags=["Medias"])

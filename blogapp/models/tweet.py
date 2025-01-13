@@ -12,5 +12,5 @@ class Tweet(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     author_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     author = relationship('User', back_populates='tweets')
-    likes = relationship('Like', back_populates='tweet', lazy='dynamic')
-    media = relationship('Media', back_populates='tweet', lazy='dynamic')
+    likes = relationship('Like', back_populates='tweet', lazy='selectin')
+    media = relationship('Media', back_populates='tweet', lazy='selectin')

@@ -1,29 +1,15 @@
 from fastapi import APIRouter, HTTPException, Depends, Header, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.sql.functions import func
 
 from blogapp.models.user import User
 from blogapp.models.follow import Follow
 from blogapp.schemas import UserCreate, UserResponse, UserUpdate
-from ..database import get_async_session
+from blogapp.dependencies.user import get_current_user
+from blogapp.dependencies.session import get_async_session
 
 router = APIRouter()
 
-async def get_current_user(
-        api_key: str = Header(...),
-        session: AsyncSession = Depends(get_async_session)
-) -> User:
-    """
-    Зависимость для получения текущего пользователя по api_key.
-    """
-    query = await session.execute(select(User).where(User.api_key == api_key))
-    user = query.scalar_one_or_none()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="Invalid API key")
-
-    return user
 
 async def find_user_by_id(id: int, session: AsyncSession = Depends(get_async_session)) -> User:
     """

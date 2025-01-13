@@ -34,13 +34,14 @@ class TweetBase(BaseModel):
     content: str
 
 class TweetCreate(TweetBase):
-    pass
+    tweet_media_ids: Optional[List[int]] = []  # Список ID медиафайлов, привязанных к твиту
 
 class TweetResponse(TweetBase):
     id: int
     author_id: int
-    updated_at: Optional[datetime]
     created_at: datetime
+    updated_at: Optional[datetime]
+    media: Optional[List[int]] = []
 
     class Config:
         orm_mode = True
@@ -86,11 +87,14 @@ class LikeResponse(LikeBase):
 
 # Схемы для медиа
 class MediaBase(BaseModel):
-    file_path: str
+    file_name: str
     tweet_id: int
 
 class MediaCreate(MediaBase):
-    pass
+    file_body: bytes  # binary data for the file
+
+    class Config:
+        orm_mode = True
 
 class MediaResponse(MediaBase):
     id: int
