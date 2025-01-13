@@ -9,10 +9,18 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     api_key: str = Field(..., title="API Key for user authentication", min_length=8)
 
+
+class FollowerFollowingResponse(BaseModel):
+    id: int
+    name: str
+
+
 class UserResponse(UserBase):
     id: int
     created_at: datetime = Field(..., title="User creation timestamp")
     updated_at: Optional[datetime] = Field(None, title="Last update timestamp")
+    followers: Optional[List[FollowerFollowingResponse]] = []
+    following: Optional[List[FollowerFollowingResponse]] = []
 
     class Config:
         orm_mode = True
