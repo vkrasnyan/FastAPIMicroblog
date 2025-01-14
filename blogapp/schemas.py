@@ -38,13 +38,17 @@ class TweetCreate(TweetBase):
 
 class TweetResponse(TweetBase):
     id: int
-    author_id: int
-    created_at: datetime
+    author_id: Optional[int]
+    created_at: Optional[datetime]
     updated_at: Optional[datetime]
     media: Optional[List[int]] = []
 
     class Config:
         orm_mode = True
+
+class TweetUpdate(TweetBase):
+    content: Optional[str] = None
+    media: Optional[List[int]] = []
 
 
 # Схемы для подписок (follows)
