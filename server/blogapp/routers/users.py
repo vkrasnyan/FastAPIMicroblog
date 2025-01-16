@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Header, Body
+from fastapi import APIRouter, HTTPException, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 

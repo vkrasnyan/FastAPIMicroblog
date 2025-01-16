@@ -1,13 +1,16 @@
+import sys
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from typing import AsyncGenerator
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from blogapp.database import engine, async_session, Base
-from blogapp.routers import users, tweets, medias
+from .database import engine, async_session, Base
+from blogapp.routers import users, medias, tweets
 
-
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # Функция для обработки жизненного цикла приложения в современных версиях FastAPI
 async def lifespan(app: FastAPI) -> AsyncGenerator:
     # Выполняется при запуске приложения
@@ -31,9 +34,16 @@ app.add_middleware(
 
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(tweets.router, prefix="/tweets", tags=["Tweets"])
-# app.include_router(follows.router, prefix="/follows", tags=["Follows"])
-# app.include_router(likes.router, prefix="/likes", tags=["Likes"])
 app.include_router(medias.router, prefix="/medias", tags=["Medias"])
+app.mount("/static", StaticFiles(directory="../client/static"), name="static")
+app.mount("/js", StaticFiles(directory="../client/static/js"), name="js")
+app.mount("/css", StaticFiles(directory="../client/static/css"), name="css")
+
+
+
+@app.get("/index")
+async def read_main():
+        return FileResponse("../client/static/index.html")
 
 
 @app.get("/", tags=["Health"])
@@ -46,6 +56,9 @@ async def health_check():
 
 @app.get("/health/db", tags=["Health"])
 async def db_health_check():
+    """
+    Проверка состояния БД
+    """
     try:
         async with async_session() as db:
             await db.execute(text("SELECT 1"))

@@ -2,7 +2,7 @@ from fastapi import Header, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from blogapp.models.user import User
+from blogapp.models import User
 from .session import get_async_session
 
 
