@@ -41,7 +41,7 @@ class TweetResponse(TweetBase):
     author_id: Optional[int]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
-    media: Optional[List[int]] = []
+    attachments: Optional[List[str]] = [] # Список ссылок на медиафайлы
 
     class Config:
         orm_mode = True

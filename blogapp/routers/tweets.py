@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 from blogapp.models import Like
 from blogapp.models.tweet import Tweet
@@ -49,7 +50,7 @@ async def create_tweet(
     return {"result": True, "tweet_id": new_tweet.id}
 
 
-@router.get("/tweets", response_model=List[TweetResponse])
+@router.get("/tweets", response_model=dict)
 async def get_tweets(
         current_user: User = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
@@ -58,10 +59,28 @@ async def get_tweets(
     Роут, возвращающий все записи пользователя - т.н. "Стена"
     """
     user = current_user
-    result = await session.execute(select(Tweet).where(Tweet.author_id == user.id))
-    if result:
-        return result.scalars().all()
+    result = await session.execute(
+        select(Tweet)
+        .options(selectinload(Tweet.media))
+        .where(Tweet.author_id == current_user.id)
+    )
 
+    tweets = result.scalars().all()
+
+    if tweets:
+        return {
+            "result": True,
+            "tweets": [
+                          {
+                              "id": tweet.id,
+                              "content": tweet.content,
+                              "attachments": [
+                                  f"/api/medias/{media.id}" for media in tweet.media
+                              ],
+                          }
+                          for tweet in tweets
+                      ]
+        }
 
 @router.get("/tweets/followed", response_model=dict)
 async def get_tweets(
@@ -73,7 +92,6 @@ async def get_tweets(
     """
     # Получаем ID пользователей, на которых подписан current_user
     try:
-        # Получаем ID пользователей, на которых подписан current_user
         following_ids_query = await session.execute(
             select(Follow.followed_id).where(Follow.leader_id == current_user.id)
         )
@@ -81,7 +99,10 @@ async def get_tweets(
 
         # Получаем твиты пользователей из списка following_ids
         result = await session.execute(
-            select(Tweet).where(Tweet.author_id.in_(following_ids)).order_by(Tweet.created_at.desc())
+            select(Tweet)
+            .options(selectinload(Tweet.media))  # Загрузка медиафайлов
+            .where(Tweet.author_id.in_(following_ids))
+            .order_by(Tweet.created_at.desc())
         )
         tweets = result.scalars().all()
 
@@ -190,3 +211,24 @@ async def update_tweet(
     await session.refresh(tweet_to_update)
 
     return tweet_to_update
+
+
+@router.get("/tweets/{tweet_id}", response_model=dict)
+async def get_tweet_by_id(
+        tweet_id: int,
+        session: AsyncSession = Depends(get_async_session)
+):
+    result = await session.execute(
+        select(Tweet)
+        .options(selectinload(Tweet.media))
+        .where(Tweet.id == tweet_id)
+    )
+    tweet_to_get = result.scalar_one_or_none()
+    tweet ={
+            "id": tweet_to_get.id,
+            "content": tweet_to_get.content,
+            "attachments": [
+                f"/media/{media.id}" for media in tweet_to_get.media  # Генерируем относительные ссылки на медиа
+            ]
+        }
+    return tweet
