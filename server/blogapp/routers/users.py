@@ -13,6 +13,8 @@ router = APIRouter()
 
 async def find_user_by_id(id: int, session: AsyncSession = Depends(get_async_session)) -> User:
     """
+    HTTP-Params:
+    id: int
     Зависимость для получения пользователя по id.
     """
     query = await session.execute(select(User).where(User.id == id))
@@ -44,7 +46,7 @@ async def get_followers_and_following(user_id: int, session: AsyncSession):
     return followers, following
 
 
-@router.post("/users/", response_model=UserResponse)
+@router.post("/", response_model=UserResponse)
 async def create_user(user: UserCreate, session: AsyncSession = Depends(get_async_session)):
     """
     Роут для создания пользователя.
@@ -65,7 +67,7 @@ async def create_user(user: UserCreate, session: AsyncSession = Depends(get_asyn
     return new_user
 
 
-@router.get("/users/<id>", response_model=UserResponse)
+@router.get("/<id>", response_model=UserResponse)
 async def find_user(
         existing_user: User = Depends(find_user_by_id),
         session: AsyncSession = Depends(get_async_session)
@@ -83,7 +85,7 @@ async def find_user(
     }
 
 
-@router.get("/users/me", response_model=UserResponse)
+@router.get("/me", response_model=dict)
 async def get_my_profile(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session)
@@ -94,18 +96,17 @@ async def get_my_profile(
     user = current_user
     followers, following = await get_followers_and_following(user.id, session)
 
-    return {
+    data = {
         "id": user.id,
         "name": user.name,
-        "api_key": user.api_key,
-        "created_at": user.created_at,
-        "updated_at": user.updated_at,
         "followers": followers,
         "following": following,
     }
 
+    return {"result": True, "user": data}
 
-@router.put("/users/me", response_model=UserResponse)
+
+@router.put("/me", response_model=UserResponse)
 async def update_user(
         current_user: User = Depends(get_current_user),
         user_update: UserUpdate = Body(...),
@@ -127,7 +128,7 @@ async def update_user(
 
     return user
 
-@router.post("/users/{id}/follow")
+@router.post("/{id}/follow")
 async def follow_user(
     current_user: User = Depends(get_current_user),
     existing_user: User = Depends(find_user_by_id),
@@ -158,7 +159,7 @@ async def follow_user(
     return {"result": True}
 
 
-@router.delete("/users/{id}/follow")
+@router.delete("/{id}/follow")
 async def unfollow_user(
     current_user: User = Depends(get_current_user),
     existing_user: User = Depends(find_user_by_id),

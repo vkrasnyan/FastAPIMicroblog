@@ -7,7 +7,7 @@ class UserBase(BaseModel):
     name: str = Field(..., title="User's name", max_length=100)
 
 class UserCreate(UserBase):
-    api_key: str = Field(..., title="API Key for user authentication", min_length=8)
+    api_key: str = Field(..., title="API Key for user authentication")
 
 
 class FollowerFollowingResponse(BaseModel):
@@ -34,7 +34,11 @@ class TweetBase(BaseModel):
     content: str
 
 class TweetCreate(TweetBase):
-    tweet_media_ids: Optional[List[int]] = []  # Список ID медиафайлов, привязанных к твиту
+    tweet_media_ids: Optional[List[int]] = None  # Список ID медиафайлов, привязанных к твиту
+
+class TweetCreateResponse(BaseModel):
+    result: bool
+    tweet_id: int
 
 class TweetResponse(TweetBase):
     id: int
