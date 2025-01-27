@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
+import logging
+from fastapi import APIRouter, HTTPException, Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -10,21 +11,31 @@ from blogapp.models.media import Media
 from blogapp.models.follow import Follow
 from blogapp.dependencies.session import get_async_session
 from blogapp.dependencies.user import get_current_user
-from blogapp.schemas import TweetResponse, TweetCreate, TweetUpdate
+from blogapp.schemas import TweetResponse, TweetCreate, TweetUpdate, TweetCreateResponse
 
 router = APIRouter()
 
 
-@router.post("/tweets", response_model=dict)
+@router.post("/", response_model=TweetCreateResponse)
 async def create_tweet(
     tweet_data: TweetCreate,
-    current_user: User = Depends(get_current_user),
+    api_key: str = Header(...),
     session: AsyncSession = Depends(get_async_session)
 ):
+    # Логируем входящие данные
+    logging.info(f"Received tweet data: {tweet_data}")
+    logging.info(f"Received api_key: {api_key}")
     """
     Роут для создания твита.
     """
-    user = current_user
+    # Получаем пользователя по api_key
+    user_query = await session.execute(select(User).filter(User.api_key == api_key))
+    user = user_query.scalars().first()
+
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid API key")
+
+    # Создаем твит
     new_tweet = Tweet(content=tweet_data.content, author_id=user.id)
     session.add(new_tweet)
     await session.commit()
@@ -39,16 +50,15 @@ async def create_tweet(
             media.tweet_id = new_tweet.id  # Устанавливаем связь с твитом
         await session.commit()
 
-        # Загружаем связанные медиафайлы
     media_query = await session.execute(
         select(Media).where(Media.tweet_id == new_tweet.id)
     )
     media_files = media_query.scalars().all()
 
-    return {"result": True, "tweet_id": new_tweet.id}
+    return TweetCreateResponse(result=True, tweet_id=new_tweet.id)
 
 
-@router.get("/tweets", response_model=dict)
+@router.get("/", response_model=dict)
 async def get_tweets(
         current_user: User = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
@@ -80,7 +90,7 @@ async def get_tweets(
                       ]
         }
 
-@router.get("/tweets/followed", response_model=dict)
+@router.get("/followed", response_model=dict)
 async def get_tweets(
         current_user: User = Depends(get_current_user),
         session: AsyncSession = Depends(get_async_session)
@@ -126,7 +136,7 @@ async def get_tweets(
             "error_message": str(e),
         }
 
-@router.delete("/tweets/{tweet_id}/delete/")
+@router.delete("/{tweet_id}/delete")
 async def delete_tweet(
         tweet_id: int,
         current_user: User = Depends(get_current_user),
@@ -150,7 +160,7 @@ async def delete_tweet(
     return {"result": True}
 
 
-@router.post("/tweets/{tweet_id/likes/}", response_model=dict)
+@router.post("/{tweet_id}/likes", response_model=dict)
 async def like_tweet(
         tweet_id: int,
         current_user: User = Depends(get_current_user),
@@ -168,7 +178,7 @@ async def like_tweet(
     return {"result": True}
 
 
-@router.delete("/tweets/{tweet_id}/likes/")
+@router.delete("/{tweet_id}/likes")
 async def delete_like(
         tweet_id: int,
         current_user: User = Depends(get_current_user),
@@ -184,7 +194,8 @@ async def delete_like(
 
     return {"result": True}
 
-@router.put("/tweets/{tweet_id}", response_model=TweetResponse)
+
+@router.put("/{tweet_id}", response_model=TweetResponse)
 async def update_tweet(
         tweet_id: int,
         tweet_update: TweetUpdate,
@@ -211,7 +222,7 @@ async def update_tweet(
     return tweet_to_update
 
 
-@router.get("/tweets/{tweet_id}", response_model=dict)
+@router.get("/{tweet_id}", response_model=dict)
 async def get_tweet_by_id(
         tweet_id: int,
         session: AsyncSession = Depends(get_async_session)
@@ -222,7 +233,7 @@ async def get_tweet_by_id(
         .where(Tweet.id == tweet_id)
     )
     tweet_to_get = result.scalar_one_or_none()
-    tweet ={
+    tweet = {
             "id": tweet_to_get.id,
             "content": tweet_to_get.content,
             "attachments": [
