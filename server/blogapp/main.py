@@ -8,7 +8,7 @@ from typing import AsyncGenerator
 from sqlalchemy import text
 
 from .database import engine, async_session, Base
-from blogapp.routers import users, medias, tweets
+from .routers import users, medias, tweets
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 

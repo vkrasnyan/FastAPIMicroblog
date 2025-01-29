@@ -11,7 +11,7 @@ from blogapp.dependencies.session import get_async_session
 router = APIRouter()
 
 
-@router.post("/upload", status_code=201)
+@router.post("/", status_code=201)
 async def upload_media(
         file: UploadFile = File(...),
         current_user: User = Depends(get_current_user),

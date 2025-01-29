@@ -31,10 +31,10 @@ class UserUpdate(UserBase):
 
 # Схемы для твитов
 class TweetBase(BaseModel):
-    content: str
+    tweet_data: str
 
 class TweetCreate(TweetBase):
-    tweet_media_ids: Optional[List[int]] = None  # Список ID медиафайлов, привязанных к твиту
+    tweet_media_ids: Optional[List[int]] = []  # Список ID медиафайлов, привязанных к твиту
 
 class TweetCreateResponse(BaseModel):
     result: bool

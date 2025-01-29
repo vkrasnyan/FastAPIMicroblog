@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from blogapp.models import Like
+from blogapp.models.like import Like
 from blogapp.models.tweet import Tweet
 from blogapp.models.user import User
 from blogapp.models.media import Media
@@ -36,7 +36,7 @@ async def create_tweet(
         raise HTTPException(status_code=400, detail="Invalid API key")
 
     # Создаем твит
-    new_tweet = Tweet(content=tweet_data.content, author_id=user.id)
+    new_tweet = Tweet(content=tweet_data.tweet_data, author_id=user.id)
     session.add(new_tweet)
     await session.commit()
     await session.refresh(new_tweet)
@@ -64,13 +64,13 @@ async def get_tweets(
         session: AsyncSession = Depends(get_async_session)
 ):
     """
-    Роут, возвращающий все записи пользователя - т.н. "Стена"
+    Роут, возвращающий все записи пользователей. Сделан из-за несовершенства фронта, ибо иначе их не видно
     """
     user = current_user
     result = await session.execute(
         select(Tweet)
         .options(selectinload(Tweet.media))
-        .where(Tweet.author_id == current_user.id)
+        .order_by(Tweet.created_at.desc())
     )
 
     tweets = result.scalars().all()
