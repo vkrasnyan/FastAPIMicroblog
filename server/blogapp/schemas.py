@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
@@ -22,8 +22,8 @@ class UserResponse(UserBase):
     followers: Optional[List[FollowerFollowingResponse]] = []
     following: Optional[List[FollowerFollowingResponse]] = []
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+
 
 class UserUpdate(UserBase):
     name: Optional[str] = None
@@ -47,8 +47,7 @@ class TweetResponse(TweetBase):
     updated_at: Optional[datetime]
     attachments: Optional[List[str]] = [] # Список ссылок на медиафайлы
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class TweetUpdate(TweetBase):
     content: Optional[str] = None
@@ -70,8 +69,7 @@ class FollowResponse(FollowBase):
     leader_id: int
     followed_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Схемы для лайков
@@ -89,8 +87,7 @@ class LikeResponse(LikeBase):
     tweet_id: int
     user_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Схемы для медиа
@@ -101,13 +98,11 @@ class MediaBase(BaseModel):
 class MediaCreate(MediaBase):
     file_body: bytes  # binary data for the file
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class MediaResponse(MediaBase):
     id: int
     tweet_id: int
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

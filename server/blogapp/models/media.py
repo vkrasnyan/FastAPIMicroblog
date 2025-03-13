@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary
 from sqlalchemy.orm import relationship
-from blogapp.database import Base
+from server.blogapp.database import Base
 
 
 class Media(Base):

@@ -2,11 +2,11 @@ from fastapi import APIRouter, HTTPException, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from blogapp.models.user import User
-from blogapp.models.follow import Follow
-from blogapp.schemas import UserCreate, UserResponse, UserUpdate
-from blogapp.dependencies.user import get_current_user
-from blogapp.dependencies.session import get_async_session
+from server.blogapp.models.user import User
+from server.blogapp.models.follow import Follow
+from server.blogapp.schemas import UserCreate, UserResponse, UserUpdate
+from server.blogapp.dependencies.user import get_current_user
+from server.blogapp.dependencies.session import get_async_session
 
 router = APIRouter()
 

@@ -4,14 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from blogapp.models.like import Like
-from blogapp.models.tweet import Tweet
-from blogapp.models.user import User
-from blogapp.models.media import Media
-from blogapp.models.follow import Follow
-from blogapp.dependencies.session import get_async_session
-from blogapp.dependencies.user import get_current_user
-from blogapp.schemas import TweetResponse, TweetCreate, TweetUpdate, TweetCreateResponse
+from server.blogapp.models.like import Like
+from server.blogapp.models.tweet import Tweet
+from server.blogapp.models.user import User
+from server.blogapp.models.media import Media
+from server.blogapp.models.follow import Follow
+from server.blogapp.dependencies.session import get_async_session
+from server.blogapp.dependencies.user import get_current_user
+from server.blogapp.schemas import TweetResponse, TweetCreate, TweetUpdate, TweetCreateResponse
 
 router = APIRouter()
 

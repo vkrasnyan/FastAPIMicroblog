@@ -3,10 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import Response
 from sqlalchemy.future import select
 
-from blogapp.models.user import User
-from blogapp.models.media import Media
-from blogapp.dependencies.user import get_current_user
-from blogapp.dependencies.session import get_async_session
+from server.blogapp.models.user import User
+from server.blogapp.models.media import Media
+from server.blogapp.dependencies.user import get_current_user
+from server.blogapp.dependencies.session import get_async_session
 
 router = APIRouter()
 
