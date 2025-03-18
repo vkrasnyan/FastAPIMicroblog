@@ -8,7 +8,6 @@ from server.blogapp.models import User
 
 @pytest_asyncio.fixture
 async def user_fixture(async_session: AsyncSession) -> User:
-    print("Создание пользователя в фикстуре user_fixture")
     user = User(
         name="Ivan Petrov",
         api_key=str(uuid.uuid4()),
@@ -17,4 +16,5 @@ async def user_fixture(async_session: AsyncSession) -> User:
     async_session.add(user)
     await async_session.commit()
     await async_session.refresh(user)
+    print(f"✅ FIXTURE: Created user ID: {user.id}")
     return user

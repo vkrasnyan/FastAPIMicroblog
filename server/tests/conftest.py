@@ -43,11 +43,10 @@ async def async_session() -> AsyncSession:
     """Фикстура для передачи сессии в тесты"""
     async with TestingSessionLocal() as session:
         yield session
-        await session.close()  # ✅ Закрываем сессию после теста
+        await session.close()
 
 
-@pytest_asyncio.fixture()
+@pytest_asyncio.fixture(autouse=True)
 async def async_client():
     async with AsyncClient(transport=ASGITransport(app), base_url="http://testserver") as client:
         yield client
-

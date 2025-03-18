@@ -23,6 +23,7 @@ async def find_user_by_id(id: int, session: AsyncSession = Depends(get_async_ses
         raise HTTPException(status_code=404, detail="Invalid user id")
     return user
 
+
 async def get_followers_and_following(user_id: int, session: AsyncSession):
     """
     Получает подписчиков и подписки для заданного пользователя.
@@ -67,19 +68,19 @@ async def create_user(user: UserCreate, session: AsyncSession = Depends(get_asyn
     return new_user
 
 
-@router.get("/<id>", response_model=UserResponse)
+@router.get("/{id}", response_model=UserResponse)
 async def find_user(
-        existing_user: User = Depends(find_user_by_id),
+        id: int,
         session: AsyncSession = Depends(get_async_session)
 ):
-    user = existing_user
-    followers, following = await get_followers_and_following(user.id, session)
+    existing_user = await find_user_by_id(id, session)
+    followers, following = await get_followers_and_following(existing_user.id, session)
     return {
-        "id": user.id,
-        "name": user.name,
-        "api_key": user.api_key,
-        "created_at": user.created_at,
-        "updated_at": user.updated_at,
+        "id": existing_user.id,
+        "name": existing_user.name,
+        "api_key": existing_user.api_key,
+        "created_at": existing_user.created_at,
+        "updated_at": existing_user.updated_at,
         "followers": followers,
         "following": following,
     }
