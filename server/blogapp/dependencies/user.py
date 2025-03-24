@@ -2,12 +2,12 @@ from fastapi import Header, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from server.blogapp.models import User
+from blogapp.models import User
 from .session import get_async_session
 
 
 async def get_current_user(
-        api_key: str = Header(...),
+        api_key: str = Header("api-key"),
         session: AsyncSession = Depends(get_async_session)
 ) -> User:
     """

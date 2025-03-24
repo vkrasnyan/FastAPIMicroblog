@@ -1,12 +1,14 @@
+from typing import Dict, Any
+
 from fastapi import APIRouter, HTTPException, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from server.blogapp.models.user import User
-from server.blogapp.models.follow import Follow
-from server.blogapp.schemas import UserCreate, UserResponse, UserUpdate
-from server.blogapp.dependencies.user import get_current_user
-from server.blogapp.dependencies.session import get_async_session
+from blogapp.models.user import User
+from blogapp.models.follow import Follow
+from blogapp.schemas import UserCreate, UserResponse, UserUpdate
+from blogapp.dependencies.user import get_current_user
+from blogapp.dependencies.session import get_async_session
 
 router = APIRouter()
 
@@ -86,7 +88,7 @@ async def find_user(
     }
 
 
-@router.get("/me", response_model=dict)
+@router.get("/me", response_model=Dict[str, Any])
 async def get_my_profile(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session)

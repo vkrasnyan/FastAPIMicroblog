@@ -3,10 +3,10 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from server.blogapp.dependencies.user import get_current_user
-from server.blogapp.models import User
-from server.blogapp.schemas import UserCreate
-from server.tests.fixtures.test_user import user_fixture
+from blogapp.dependencies.user import get_current_user
+from blogapp.models import User
+from blogapp.schemas import UserCreate
+from tests.fixtures.test_user import user_fixture
 
 ROOT_ENDPOINT = "/api/users"
 

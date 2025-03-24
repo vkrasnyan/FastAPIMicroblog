@@ -3,7 +3,7 @@ import pytest_asyncio
 import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.blogapp.models import User
+from blogapp.models import User
 
 
 @pytest_asyncio.fixture

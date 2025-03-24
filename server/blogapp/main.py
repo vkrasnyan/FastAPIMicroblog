@@ -7,8 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from typing import AsyncGenerator
 from sqlalchemy import text
 
-from server.blogapp.database import engine, async_session, Base
-from server.blogapp.routers import users, medias, tweets
+from blogapp.database import engine, async_session, Base
+from blogapp.routers import users, medias, tweets
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -52,7 +52,10 @@ app.mount("/css", StaticFiles(directory=os.path.join(static_dir, "css")), name="
 
 @app.get("/login")
 async def read_main():
-        return FileResponse("../client/static/index.html")
+    index_path = os.path.join(base_dir, "client", "static", "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"detail": "index.html not found"}
 
 
 @app.get("/", tags=["Health"])

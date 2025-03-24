@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey,DateTime, func
 from sqlalchemy.orm import relationship
-from server.blogapp.database import Base
+from blogapp.database import Base
 
 
 class Tweet(Base):

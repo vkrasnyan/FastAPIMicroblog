@@ -1,13 +1,9 @@
-import datetime
-import uuid
-
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
-from server.blogapp.models import User
-from server.tests.fixtures.test_user import user_fixture
+from blogapp.models import User
+from tests.fixtures.test_user import user_fixture
 
 ROOT_ENDPOINT = "/api/users"
 
@@ -20,7 +16,7 @@ class TestGetUserbyID:
             user_fixture: User,
             async_client: AsyncClient,
     ) -> None:
-
+        print(f"🔥 Using DB: {async_session.bind.url}")
         response = await async_client.get(f"{ROOT_ENDPOINT}/{user_fixture.id}")
         assert response.status_code == 200
         user_data = response.json()

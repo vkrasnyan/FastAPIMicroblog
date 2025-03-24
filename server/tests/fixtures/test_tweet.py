@@ -1,8 +1,8 @@
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.blogapp.models.tweet import Tweet
-from server.blogapp.models.user import User
+from blogapp.models.tweet import Tweet
+from blogapp.models.user import User
 
 
 @pytest_asyncio.fixture

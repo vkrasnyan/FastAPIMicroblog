@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.blogapp.models.follow import Follow
+from blogapp.models.follow import Follow
 
 
 class TestFollowModel:

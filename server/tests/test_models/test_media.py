@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.blogapp.models.media import Media
+from blogapp.models.media import Media
 
 
 class TestLikeModel:
