@@ -3,8 +3,8 @@ version: '3.8'
 services:
   client:
     build:
-      context: .
-      dockerfile: client/Dockerfile
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
     networks:
@@ -12,8 +12,8 @@ services:
 
   server:
     build:
-      context: .
-      dockerfile: server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     environment:
       - DATABASE_URL=postgresql+asyncpg://vickie:newpassword@localhost/db/microblog
       - "TEST_DATABASE_URL=sqlite+aiosqlite:///:memory:"
