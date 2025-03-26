@@ -13,11 +13,8 @@ from blogapp.routers import users, medias, tweets
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))  # Корень проекта
-static_dir = os.path.join(base_dir, "client/static")
+static_dir = os.path.join(base_dir, "/app/static")
 favicon_path = os.path.join(static_dir, "favicon.ico")
-
-if not os.path.exists(static_dir):
-    raise RuntimeError(f"Directory '{static_dir}' does not exist.")
 
 # Функция для обработки жизненного цикла приложения в современных версиях FastAPI
 async def lifespan(app: FastAPI) -> AsyncGenerator:
@@ -52,7 +49,7 @@ app.mount("/css", StaticFiles(directory=os.path.join(static_dir, "css")), name="
 
 @app.get("/login")
 async def read_main():
-    index_path = os.path.join(base_dir, "client", "static", "index.html")
+    index_path = os.path.join(base_dir, "app", "static", "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
     return {"detail": "index.html not found"}

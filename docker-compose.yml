@@ -3,8 +3,8 @@ version: '3.8'
 services:
   client:
     build:
-      context: ./client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: client/Dockerfile
     ports:
       - "8080:80"
     networks:
@@ -12,16 +12,18 @@ services:
 
   server:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: server/Dockerfile
     environment:
-      - DATABASE_URL=postgresql+asyncpg://vickie:newpassword@localhost/db/microblog
+      - DATABASE_URL=postgresql+asyncpg://vickie:newpassword@db/microblog
       - "TEST_DATABASE_URL=sqlite+aiosqlite:///:memory:"
     ports:
       - "5000:5000"
     restart: always
     networks:
       - my_network
+    volumes:
+      - ./client/static:/app/static  # Пробрасываем статику
 
   db:
     image: postgres:latest
@@ -43,3 +45,4 @@ networks:
 
 volumes:
   postgres_data:
+
