@@ -3,6 +3,7 @@ from typing import Dict, Any
 from fastapi import APIRouter, HTTPException, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from starlette.responses import JSONResponse
 
 from blogapp.models.user import User
 from blogapp.models.follow import Follow
@@ -70,43 +71,24 @@ async def create_user(user: UserCreate, session: AsyncSession = Depends(get_asyn
     return new_user
 
 
-@router.get("/{id}", response_model=UserResponse)
-async def find_user(
-        id: int,
-        session: AsyncSession = Depends(get_async_session)
-):
-    existing_user = await find_user_by_id(id, session)
-    followers, following = await get_followers_and_following(existing_user.id, session)
-    return {
-        "id": existing_user.id,
-        "name": existing_user.name,
-        "api_key": existing_user.api_key,
-        "created_at": existing_user.created_at,
-        "updated_at": existing_user.updated_at,
-        "followers": followers,
-        "following": following,
-    }
-
-
-@router.get("/me", response_model=Dict[str, Any])
+@router.get("/me")
 async def get_my_profile(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
     """
-    Роут для получения информации о своем профиле
+    Получение информации о своем профиле.
     """
-    user = current_user
-    followers, following = await get_followers_and_following(user.id, session)
-
-    data = {
-        "id": user.id,
-        "name": user.name,
-        "followers": followers,
-        "following": following,
+    followers, following = await get_followers_and_following(current_user.id, session)
+    return {
+        "result": True,
+        "user": {
+            "id": current_user.id,
+            "name": current_user.name,
+            "followers": followers,
+            "following": following,
+        },
     }
-
-    return {"result": True, "user": data}
 
 
 @router.put("/me", response_model=UserResponse)
@@ -130,6 +112,25 @@ async def update_user(
     await session.refresh(user)
 
     return user
+
+
+@router.get("/{id}", response_model=UserResponse)
+async def find_user(
+        id: int,
+        session: AsyncSession = Depends(get_async_session)
+):
+    existing_user = await find_user_by_id(id, session)
+    followers, following = await get_followers_and_following(existing_user.id, session)
+    return {
+        "id": existing_user.id,
+        "name": existing_user.name,
+        "api_key": existing_user.api_key,
+        "created_at": existing_user.created_at,
+        "updated_at": existing_user.updated_at,
+        "followers": followers,
+        "following": following,
+    }
+
 
 @router.post("/{id}/follow")
 async def follow_user(

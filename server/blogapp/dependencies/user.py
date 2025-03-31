@@ -7,7 +7,7 @@ from .session import get_async_session
 
 
 async def get_current_user(
-        api_key: str = Header("api-key"),
+        api_key: str = Header(...),
         session: AsyncSession = Depends(get_async_session)
 ) -> User:
     """
