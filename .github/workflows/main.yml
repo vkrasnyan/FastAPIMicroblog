@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - name: Build Docker image  # Собираем Docker-образ
         run: docker build -t my-test-image -f server/Dockerfile .
 
