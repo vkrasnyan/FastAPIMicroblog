@@ -4,25 +4,16 @@ on:
   pull_request:
     branches:
       - master
+
 jobs:
   test:
-    name: Run Tests
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.10.6
-    - name: Install dependencies
-      run: |
-        python --version
-        pip install -r requirements.txt
-        pip install pytest
-    - name: Run tests
-      run: |
-          cd src
-          python -m pytest -c pytest.ini
+      - name: Build Docker image  # Сначала собираем образ
+        run: docker build -t my-test-image -f server/Dockerfile .
+
+      - name: Run tests inside container  # Потом запускаем контейнер с этим образом
+        run: docker run --rm my-test-image pytest -c server/tests/pytest.ini
