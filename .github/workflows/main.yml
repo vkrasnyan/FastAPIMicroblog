@@ -7,26 +7,18 @@ on:
 
 jobs:
   test:
-    name: Run Tests
     runs-on: ubuntu-latest
-
+    container:
+      image: my-test-image:latest  # Используем кастомный образ
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.10.6
-          cache: 'pip'
-      
-      - name: Install dependencies
+
+      - name: Build Docker image
         run: |
-          python --version
-          pip install -r requirements.txt
-          pip install pytest
-      
+          docker build -t my-test-image -f server/Dockerfile .
+
       - name: Run tests
         run: |
-          cd server
-          python -m pytest -c pytest.ini tests
+          cd server/tests
+          python -m pytest -c pytest.ini
