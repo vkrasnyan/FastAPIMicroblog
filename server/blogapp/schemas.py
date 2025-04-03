@@ -17,6 +17,8 @@ class FollowerFollowingResponse(BaseModel):
 
 class UserResponse(UserBase):
     id: int
+    name: str
+    api_key: str
     created_at: datetime = Field(..., title="User creation timestamp")
     updated_at: Optional[datetime] = Field(None, title="Last update timestamp")
     followers: Optional[List[FollowerFollowingResponse]] = []
