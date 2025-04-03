@@ -4,25 +4,29 @@ on:
   pull_request:
     branches:
       - master
+
 jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
 
-steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.10.6
-    - name: Install dependencies
-      run: |
-        python --version
-        pip install -r requirements.txt
-        pip install pytest
-    - name: Run tests
-      run: |
-          cd src
-          python -m pytest -c pytest.ini
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10.6
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python --version
+          pip install -r requirements.txt
+          pip install pytest
+      
+      - name: Run tests
+        run: |
+          cd server
+          python -m pytest -c pytest.ini tests
