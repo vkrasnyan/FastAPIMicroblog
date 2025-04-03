@@ -27,7 +27,7 @@ jobs:
 
       # Шаг 4: Запускаем тесты внутри контейнера
       - name: Run tests inside container
-        run: docker-compose exec -T app pytest -c tests/pytest.ini
+        run: docker-compose exec -T app pytest -v -c tests/pytest.ini
 
       # Шаг 5: Останавливаем и удаляем контейнеры после тестов
       - name: Clean up
