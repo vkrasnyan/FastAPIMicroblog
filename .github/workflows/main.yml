@@ -20,7 +20,7 @@ jobs:
           docker-compose --version
 
       - name: Build and start services
-        run: docker-compose -f server/docker-compose.yml up -d --build
+        run: docker-compose -f docker-compose.yml up -d --build
 
       - name: Show server container logs
         run: docker-compose logs server  # Показать логи сервера
