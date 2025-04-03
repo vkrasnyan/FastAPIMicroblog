@@ -20,17 +20,16 @@ jobs:
           docker-compose --version
 
       - name: Build and start services
-        run: docker-compose -f docker-compose.yml up -d --build
+        run: docker-compose -f server/docker-compose.yml up -d --build
 
-      - name: Show container logs
-        run: docker-compose logs app
+      - name: Show server container logs
+        run: docker-compose logs server  # Показать логи сервера
 
       - name: Install dependencies
-        run: docker-compose exec -T app pip install -r requirements.txt
+        run: docker-compose exec -T server pip install -r requirements.txt
 
       - name: Run tests with detailed output
-        run: docker-compose exec -T app pytest -v -c server/tests/pytest.ini
+        run: docker-compose exec -T server pytest -v -c tests/pytest.ini  # Запуск тестов в контейнере server
 
       - name: Clean up
         run: docker-compose down
-
