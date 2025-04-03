@@ -16,4 +16,4 @@ jobs:
         run: docker build -t my-test-image -f server/Dockerfile .
 
       - name: Run tests inside container  # Запускаем тесты внутри контейнера
-        run: docker run --rm my-test-image pytest -c server/tests/pytest.ini
+        run: docker run --rm my-test-image pytest -c tests/pytest.ini
