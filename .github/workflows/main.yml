@@ -3,8 +3,7 @@ name: CI Test Pipeline
 on:
   pull_request:
     branches:
-      - main
-      - develop
+      - master
 jobs:
   test:
     name: Run Tests
