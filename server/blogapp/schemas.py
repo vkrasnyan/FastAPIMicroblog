@@ -53,7 +53,7 @@ class TweetResponse(TweetBase):
 
 class TweetUpdate(TweetBase):
     content: Optional[str] = None
-    media: Optional[List[int]] = []
+    media: Optional[List[int]] = None
 
 
 # Схемы для подписок (follows)
