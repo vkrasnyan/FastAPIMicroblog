@@ -11,7 +11,7 @@ from blogapp.models.media import Media
 from blogapp.models.follow import Follow
 from blogapp.dependencies.session import get_async_session
 from blogapp.dependencies.user import get_current_user
-from blogapp.schemas import TweetResponse, TweetCreate, TweetUpdate, TweetCreateResponse
+from blogapp.schemas import TweetCreate, TweetUpdate, TweetCreateResponse, TweetUpdateResponse
 
 router = APIRouter()
 
@@ -195,7 +195,7 @@ async def delete_like(
     return {"result": True}
 
 
-@router.put("/{tweet_id}", response_model=TweetResponse)
+@router.put("/{tweet_id}", response_model=TweetUpdateResponse)
 async def update_tweet(
         tweet_id: int,
         tweet_update: TweetUpdate,
