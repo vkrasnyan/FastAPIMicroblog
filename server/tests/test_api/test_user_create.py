@@ -53,7 +53,7 @@ class TestUserCreate:
         response = await async_client.post("/users/", json=payload)
 
         assert response.status_code == 404
-        assert response.json()["detail"] == "Not found"
+        assert response.json()["detail"] == "Not Found"
 
         query = await async_session.execute(
             select(User).where(User.api_key == user_fixture.api_key)
