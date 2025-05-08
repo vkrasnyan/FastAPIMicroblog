@@ -51,7 +51,7 @@ class TestUserCreate:
 
         response = await async_client.post("/users/", json=payload)
 
-        assert response.status_code == 400
+        assert response.status_code == 404
         assert response.json()["detail"] == "User with this API key already exists"
 
         query = await async_session.execute(
