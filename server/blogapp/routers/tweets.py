@@ -210,9 +210,9 @@ async def update_tweet(
     if tweet_to_update.author_id != current_user.id:
         raise HTTPException(status_code=403, detail="You are not authorized to update this tweet")
 
-    if tweet_update.content:
-        tweet_to_update.content = tweet_update.content
-    if tweet_update.media:
+    if tweet_update.content is not None:
+        tweet_to_update.tweet_data = tweet_update.content
+    if tweet_update.media is not None:
         tweet_to_update.media = tweet_update.media
 
     session.add(tweet_to_update)

@@ -22,7 +22,7 @@ class TestUpdateTweet:
         await async_session.commit()
         await async_session.refresh(tweet)
 
-        updated_content = {"content": "Updated content"}
+        updated_content = {"tweet_data": "Updated content"}
 
         response = await async_client.put(
             f"{TWEET_ENDPOINT}/{tweet.id}",
@@ -31,7 +31,7 @@ class TestUpdateTweet:
         )
 
         assert response.status_code == 200
-        assert response.json()["content"] == updated_content["content"]
+        assert response.json()["tweet_data"] == updated_content["tweet_data"]
 
     @pytest.mark.asyncio
     async def test_update_tweet_not_author(
