@@ -233,11 +233,15 @@ async def get_tweet_by_id(
         .where(Tweet.id == tweet_id)
     )
     tweet_to_get = result.scalar_one_or_none()
-    tweet = {
-            "id": tweet_to_get.id,
-            "content": tweet_to_get.content,
-            "attachments": [
-                f"/media/{media.id}" for media in tweet_to_get.media  # Генерируем относительные ссылки на медиа
-            ]
-        }
+    if not tweet_to_get:
+        raise HTTPException(status_code=404, detail="Tweet not found")
+    else:
+        tweet = {
+                "id": tweet_to_get.id,
+                "content": tweet_to_get.content,
+                "attachments": [
+                    f"/media/{media.id}" for media in tweet_to_get.media  # Генерируем относительные ссылки на медиа
+                ]
+            }
+
     return tweet
