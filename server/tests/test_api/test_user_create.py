@@ -4,7 +4,6 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from blogapp.dependencies.user import get_current_user
 from blogapp.models import User
 from blogapp.schemas import UserCreate
 from tests.fixtures.test_user import user_fixture
@@ -28,9 +27,10 @@ class TestUserCreate:
         response = await async_client.post(
             ROOT_ENDPOINT,
             json=user_data.model_dump(),
+            follow_redirects=True,
         )
 
-        assert response.status_code == 307
+        assert response.status_code == 200
         result = response.json()
         assert result["name"] == user_data.name
         assert result["api_key"] == user_data.api_key
