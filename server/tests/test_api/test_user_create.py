@@ -15,6 +15,7 @@ ROOT_ENDPOINT = "/api/users"
 class TestUserCreate:
     @pytest.mark.asyncio
     async def test_create_success(
+            self,
             async_client: AsyncClient,
             async_session: AsyncSession,
     ) -> None:
