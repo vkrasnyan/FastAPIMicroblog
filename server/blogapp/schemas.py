@@ -17,6 +17,8 @@ class FollowerFollowingResponse(BaseModel):
 
 class UserResponse(UserBase):
     id: int
+    name: str
+    api_key: str
     created_at: datetime = Field(..., title="User creation timestamp")
     updated_at: Optional[datetime] = Field(None, title="Last update timestamp")
     followers: Optional[List[FollowerFollowingResponse]] = []
@@ -49,9 +51,18 @@ class TweetResponse(TweetBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-class TweetUpdate(TweetBase):
+
+class TweetUpdateResponse(TweetBase):
+    id: int
+    author_id: Optional[int]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
+
+    model_config = ConfigDict(from_attributes=True)
+
+class TweetUpdate(BaseModel):
     content: Optional[str] = None
-    media: Optional[List[int]] = []
+    media: Optional[List[int]] = None
 
 
 # Схемы для подписок (follows)
