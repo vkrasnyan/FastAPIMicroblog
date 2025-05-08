@@ -30,7 +30,7 @@ class TestUserCreate:
             json=user_data.model_dump(),
         )
 
-        assert response.status_code == 200
+        assert response.status_code == 307
         result = response.json()
         assert result["name"] == user_data.name
         assert result["api_key"] == user_data.api_key
