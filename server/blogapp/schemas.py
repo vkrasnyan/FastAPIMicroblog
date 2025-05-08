@@ -51,7 +51,7 @@ class TweetResponse(TweetBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-class TweetUpdate(TweetBase):
+class TweetUpdate(BaseModel):
     content: Optional[str] = None
     media: Optional[List[int]] = None
 
