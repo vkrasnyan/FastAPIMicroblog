@@ -2,14 +2,15 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from blogapp.models import User
+from tests.fixtures.test_user import user_fixture
 
-ROOT_ENDPOINT = "/me"
+ROOT_ENDPOINT = "/api/users/me"
 
 @pytest.mark.asyncio
 async def test_get_my_profile(
         async_session: AsyncSession,
+        user_fixture: User,
         async_client: AsyncClient,
-        user_fixture: User
 ):
     headers = {
         "api-key": user_fixture.api_key
