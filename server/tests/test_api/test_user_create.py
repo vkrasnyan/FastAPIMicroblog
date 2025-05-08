@@ -1,3 +1,4 @@
+import uuid
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,28 +15,24 @@ ROOT_ENDPOINT = "/api/users"
 class TestUserCreate:
     @pytest.mark.asyncio
     async def test_create_success(
-        self,
-        async_session: AsyncSession,
-        user_fixture: User,
-        async_client: AsyncClient,
+            async_client: AsyncClient,
+            async_session: AsyncSession,
     ) -> None:
-        """Проверка создания пользователя"""
-        data = UserCreate(
-            name=user_fixture.name,
-            api_key=user_fixture.api_key
+        """Проверка успешного создания пользователя"""
+        user_data = UserCreate(
+            name="Test User",
+            api_key=str(uuid.uuid4())
         )
+
         response = await async_client.post(
             ROOT_ENDPOINT,
-            json=data.model_dump(),
-            follow_redirects=True
+            json=user_data.model_dump(),
         )
-        assert response.status_code == 200
 
-        created_user = await get_current_user(
-            api_key=user_fixture.api_key,
-            session=async_session
-        )
-        assert created_user is not None
+        assert response.status_code == 200
+        result = response.json()
+        assert result["name"] == user_data.name
+        assert result["api_key"] == user_data.api_key
 
     @pytest.mark.asyncio
     async def test_create_existing_user(
