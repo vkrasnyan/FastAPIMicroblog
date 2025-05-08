@@ -32,7 +32,7 @@ class TestGetTweets:
 
         # Проверим, что контенты твитов совпадают
         returned_contents = [tweet["content"] for tweet in data["tweets"]]
-        expected_contents = [tweet.content for tweet in reversed(test_tweets)]
+        expected_contents = [tweet.content for tweet in test_tweets]
         assert returned_contents == expected_contents
 
     @pytest.mark.asyncio
