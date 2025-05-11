@@ -3,6 +3,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from io import BytesIO
 from blogapp.models import Media, User
+from tests.fixtures.test_user import user_fixture
 
 MEDIA_ENDPOINT = "/media"
 
@@ -35,7 +36,8 @@ class TestMediaEndpoints:
     async def test_upload_media_too_large(
         self,
         async_client: AsyncClient,
-        user_fixture
+        async_session: AsyncSession,
+        user_fixture: User
     ):
         # Создаем файл больше 5MB
         big_file = BytesIO(b"x" * (5 * 1024 * 1024 + 1))
@@ -71,7 +73,8 @@ class TestMediaEndpoints:
     @pytest.mark.asyncio
     async def test_get_media_not_found(
         self,
-        async_client: AsyncClient
+        async_client: AsyncClient,
+        async_session: AsyncSession
     ):
         response = await async_client.get(f"{MEDIA_ENDPOINT}/999999")
 
