@@ -5,7 +5,7 @@ from io import BytesIO
 from blogapp.models import Media, User
 from tests.fixtures.test_user import user_fixture
 
-MEDIA_ENDPOINT = "/api/media"
+MEDIA_ENDPOINT = "/api/medias"
 
 
 class TestMediaEndpoints:
