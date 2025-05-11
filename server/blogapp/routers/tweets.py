@@ -195,31 +195,31 @@ async def delete_like(
     return {"result": True}
 
 
-@router.put("/{tweet_id}", response_model=TweetUpdateResponse)
-async def update_tweet(
-        tweet_id: int,
-        tweet_update: TweetUpdate,
-        current_user: User = Depends(get_current_user),
-        session: AsyncSession = Depends(get_async_session)
-):
-    query = await session.execute(select(Tweet).where(Tweet.id == tweet_id))
-    tweet_to_update = query.scalar_one_or_none()
-    if not tweet_to_update:
-        raise HTTPException(status_code=400, detail="No such tweet")
-
-    if tweet_to_update.author_id != current_user.id:
-        raise HTTPException(status_code=403, detail="You are not authorized to update this tweet")
-
-    if tweet_update.content is not None:
-        tweet_to_update.tweet_data = tweet_update.content
-    if tweet_update.media is not None:
-        tweet_to_update.media = tweet_update.media
-
-    session.add(tweet_to_update)
-    await session.commit()
-    await session.refresh(tweet_to_update)
-
-    return tweet_to_update
+# @router.put("/{tweet_id}", response_model=TweetUpdateResponse)
+# async def update_tweet(
+#         tweet_id: int,
+#         tweet_update: TweetUpdate,
+#         current_user: User = Depends(get_current_user),
+#         session: AsyncSession = Depends(get_async_session)
+# ):
+#     query = await session.execute(select(Tweet).where(Tweet.id == tweet_id))
+#     tweet_to_update = query.scalar_one_or_none()
+#     if not tweet_to_update:
+#         raise HTTPException(status_code=400, detail="No such tweet")
+#
+#     if tweet_to_update.author_id != current_user.id:
+#         raise HTTPException(status_code=403, detail="You are not authorized to update this tweet")
+#
+#     if tweet_update.content is not None:
+#         tweet_to_update.tweet_data = tweet_update.content
+#     if tweet_update.media is not None:
+#         tweet_to_update.media = tweet_update.media
+#
+#     session.add(tweet_to_update)
+#     await session.commit()
+#     await session.refresh(tweet_to_update)
+#
+#     return tweet_to_update
 
 
 @router.get("/{tweet_id}", response_model=dict)
