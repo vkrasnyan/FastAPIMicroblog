@@ -11,7 +11,7 @@ from blogapp.models.media import Media
 from blogapp.models.follow import Follow
 from blogapp.dependencies.session import get_async_session
 from blogapp.dependencies.user import get_current_user
-from blogapp.schemas import TweetResponse, TweetCreate, TweetUpdate, TweetCreateResponse
+from blogapp.schemas import TweetCreate, TweetUpdate, TweetCreateResponse, TweetUpdateResponse
 
 router = APIRouter()
 
@@ -195,7 +195,7 @@ async def delete_like(
     return {"result": True}
 
 
-@router.put("/{tweet_id}", response_model=TweetResponse)
+@router.put("/{tweet_id}", response_model=TweetUpdateResponse)
 async def update_tweet(
         tweet_id: int,
         tweet_update: TweetUpdate,
@@ -210,9 +210,9 @@ async def update_tweet(
     if tweet_to_update.author_id != current_user.id:
         raise HTTPException(status_code=403, detail="You are not authorized to update this tweet")
 
-    if tweet_update.content:
-        tweet_to_update.content = tweet_update.content
-    if tweet_update.media:
+    if tweet_update.content is not None:
+        tweet_to_update.tweet_data = tweet_update.content
+    if tweet_update.media is not None:
         tweet_to_update.media = tweet_update.media
 
     session.add(tweet_to_update)
@@ -233,11 +233,15 @@ async def get_tweet_by_id(
         .where(Tweet.id == tweet_id)
     )
     tweet_to_get = result.scalar_one_or_none()
-    tweet = {
-            "id": tweet_to_get.id,
-            "content": tweet_to_get.content,
-            "attachments": [
-                f"/media/{media.id}" for media in tweet_to_get.media  # Генерируем относительные ссылки на медиа
-            ]
-        }
+    if not tweet_to_get:
+        raise HTTPException(status_code=404, detail="Tweet not found")
+    else:
+        tweet = {
+                "id": tweet_to_get.id,
+                "content": tweet_to_get.content,
+                "attachments": [
+                    f"/media/{media.id}" for media in tweet_to_get.media  # Генерируем относительные ссылки на медиа
+                ]
+            }
+
     return tweet

@@ -190,4 +190,3 @@ async def unfollow_user(
     await session.commit()
 
     return {"result": True}
-
