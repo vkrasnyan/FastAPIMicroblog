@@ -76,4 +76,4 @@ class TestMediaEndpoints:
         response = await async_client.get(f"{MEDIA_ENDPOINT}/999999")
 
         assert response.status_code == 404
-        assert response.json()["detail"] == "Media not found"
+        assert response.json()["detail"] == "Not found"
